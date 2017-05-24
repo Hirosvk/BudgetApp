@@ -1,0 +1,29 @@
+5/23
+- github access created
+- awscli created
+- hiro aws account created
+- virtualenv created
+
+- aws configure ran with hiro's credential
+
+- aws rds describe-db-instances don't return supposedly running postgres instance
+
+
+Gmail API
+	setup project authentication
+	https://developers.google.com/api-client-library/python/start/get_started#django-support
+
+	OAuth: know what they mean
+	https://developers.google.com/api-client-library/python/reference/pydoc
+	https://developers.google.com/api-client-library/python/guide/aaa_oauth	
+	-> Flow
+	-> Credential
+	-> Storage
+
+Django
+
+EC2
+
+Database
+	use AWS RDS (relational)
+
