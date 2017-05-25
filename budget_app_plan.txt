@@ -8,6 +8,11 @@
 
 - aws rds describe-db-instances don't return supposedly running postgres instance
 
+when logging into EC2 instances with ubuntu, use 'ubuntu' as username
+
+PGDATA=/usr/local/var/postgres/
+
+Tring to connect to AWS RDS, not successful yet
 
 Gmail API
 	setup project authentication
