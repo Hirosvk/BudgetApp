@@ -1,0 +1,21 @@
+transactions
+
+_id: int, PK
+amount: int 
+description: int
+budget_type: int, FK
+category: int, FK
+marchant: int, FK
+
+category
+_id: int, PK
+name: 'grocery', 'eating_out', 'gas', 'fun', 'other', 'cash_withdrawal'
+
+budet_type
+_id: 
+name: 'grocery/gas', 'bill', 'other', 'medical'
+
+marchant
+_id: 
+name: 'Costco', 'Arco'
+

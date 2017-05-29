@@ -10,9 +10,19 @@
 
 when logging into EC2 instances with ubuntu, use 'ubuntu' as username
 
-PGDATA=/usr/local/var/postgres/
+Connect to AWS RDS with
+psql -h budgetappmain.ccpeo3tlzvtm.us-west-1.rds.amazonaws.com -p 5432 -U hirords -d budget_app_main
 
-Tring to connect to AWS RDS, not successful yet
+
+1. Design
+
+	Schema 
+
+
+
+2. Make Page work w/ manual data enter interface
+
+3. Auto data enter with email reader
 
 Gmail API
 	setup project authentication
@@ -25,10 +35,5 @@ Gmail API
 	-> Credential
 	-> Storage
 
-Django
 
-EC2
-
-Database
-	use AWS RDS (relational)
 
