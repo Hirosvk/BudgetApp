@@ -14,6 +14,20 @@ Connect to AWS RDS with
 psql -h budgetappmain.ccpeo3tlzvtm.us-west-1.rds.amazonaws.com -p 5432 -U hirords -d budget_app_main
 
 
+Running Local PosgreSQL
+set env var PGDATA=/usr/local/var/postgres
+run postgers server with the command `postgres`
+run cli command createdb <dbname>
+connect with psql <dbname> (hiro_psql_local)
+
+
+<Next>
+Delete all tables
+Try seeding
+
+Workon bottle app and html templates
+
+
 1. Design
 
 	Schema 

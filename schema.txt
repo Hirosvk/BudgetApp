@@ -6,16 +6,50 @@ description: int
 budget_type: int, FK
 category: int, FK
 marchant: int, FK
+timestamp: timestamp with time zone,
+date: date
+
+
+CREATE TABLE transactions (
+	_id SERIAL,
+	amount integer,
+	description text,
+	budget_type integer,
+	category integer,
+	marchant integer,
+	timestamp timestamp,
+	date date,
+
+	PRIMARY KEY (_id),
+	FOREIGN KEY (budget_type) REFERENCES budget_types (_id),
+	FOREIGN KEY (category) REFERENCES categories (_id),
+	FOREIGN KEY (marchant) REFERENCES marchants (_id)
+)
 
 category
 _id: int, PK
 name: 'grocery', 'eating_out', 'gas', 'fun', 'other', 'cash_withdrawal'
+CREATE TABLE categories (
+	_id SERIAL,
+	name varchar(200),
+	PRIMARY KEY(_ID)
+)
+
 
 budet_type
 _id: 
 name: 'grocery/gas', 'bill', 'other', 'medical'
+CREATE TABLE budget_types (
+	_id SERIAL,
+	name varchar(200),
+	PRIMARY KEY(_ID)
+)
 
 marchant
 _id: 
 name: 'Costco', 'Arco'
-
+CREATE TABLE marchats (
+	_id SERIAL,
+	name varchar(200),
+	PRIMARY KEY(_ID)
+)
