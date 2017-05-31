@@ -22,6 +22,42 @@ connect with psql <dbname> (hiro_psql_local)
 
 
 <Next>
+Use Flask for framework
+	static file serving for css
+	Build app with no js
+
+	main page with this months info
+		list of transactions with edit button
+
+	edit page
+		edit content with delte, save, and cancel button
+
+	prev_month view	
+
+Finish seed file
+Launch to EC2
+
+Email reader
+	first get the server running so that auth request can be made from localhost
+	can use tools.run_flow so that we don't need server maybe
+	
+	install google python sdk 
+	get credential from home mac
+		make sure to set 'access_type' 'offline'
+	Follow this link on OAuth for Web apps
+		https://developers.google.com/api-client-library/python/auth/web-app
+	store credential in db as json
+	probably don't have to use Storage: just use OAuth2Credentials.from_json()
+
+requirements
+	remove 
+		bottle
+	add
+		flask
+		pycrypto
+		google-api-python-client
+
+
 Delete all tables
 Try seeding
 

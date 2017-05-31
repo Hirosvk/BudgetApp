@@ -28,23 +28,49 @@ sql_commands = {
         CREATE TABLE categories (
                 _id SERIAL,
                 name varchar(250),
-                PRIMARY KEY(_ID)
+                PRIMARY KEY(_id)
         )
     """,
     'create_b':  """
         CREATE TABLE budget_types (
                 _id SERIAL,
                 name varchar(250),
-                PRIMARY KEY(_ID)
+                PRIMARY KEY(_id)
         )
     """,
     'create_m':  """
-        CREATE TABLE marchant (
+        CREATE TABLE marchants (
                 _id SERIAL,
                 name varchar(250),
-                PRIMARY KEY(_ID)
+                PRIMARY KEY(_id)
         )
     """,
+
+    'create_u':"""
+        CREATE TABLE users (
+            _id SERIAL,
+            username varchar(50),
+            password varchar(250),
+            email_address varchar(250),
+            google_auth_credential text,
+            session_token varchar(250),
+            PRIMARY KEY(_id)
+        )
+    """,
+
+    'create_l':"""
+        CREATE TABLE limits (
+            _id SERIAL,
+            budget_type integer,
+            month integer,
+            year integer,
+            amount integer,
+            result integer,
+            PRIMARY KEY(_id),
+            FOREIGN KEY (budget_type) REFERENCES budget_types (_id)
+        )
+    """,
+
     'seed_1': """
         INSERT INTO budget_types
         VALUES (DEFAULT, 'monthly_grocery')
@@ -70,6 +96,11 @@ sql_commands = {
         (DEFAULT, 'Arco'),
         (DEFAULT, 'Target'),
         (DEFAULT, 'Kaiser')
+    """,
+
+    'seed_4': """
+        INSERT INTO users (_id, username, password)
+        VALUES (DEFAULT, 'hiro', 'f177b636530f8ee2919bd790531ce60e711ab9775a231fc4330e4e21090cc1d9')
     """
 }
 

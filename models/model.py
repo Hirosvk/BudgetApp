@@ -1,5 +1,7 @@
 import datetime
 
+from Crypto.Hash import SHA256
+
 from db_connection import DB
 
 class DBBase(object):
@@ -135,4 +137,35 @@ class Transaction(DBBase):
             WHERE t.date >= '{}' AND t.date < '{}' AND b.name = '{}'
         """.format(select_fields, this_month_start, next_month_start, cls.default_budget_type))
         return cls.db.fetchall()
+
+
+class User(DBBase):
+    table_name = 'users'
+    master_user = 'hiro'    
+
+    @classmethod
+    def insert_new_user(cls, username, password):
+        sha256 = SHA256.new()
+        pswd_hash = sha256.new(password).hexdigest()
+        
+        cls.db.execute("""
+            INSERT INTO users (_id, username, password)
+            VALUES (DEFAULT, '{}', '{}')
+        """.format(username, pswd_hash))
+        print cls.db.statusmessage
+
+    @classmethod
+    def auth_master_user(cls, password):
+        cls.db.execute("""
+            SELECT password
+            FROM users
+            WHERE username = '{}' 
+        """.format(cls.master_user))
+        db_password = cls.db.fetchone()[0]
+        sha256 = SHA256.new()
+        pswd_hash = sha256.new(password).hexdigest()
+
+        if db_password == pswd_hash
+            # return session token
+            pass
 
