@@ -1,44 +1,22 @@
-from db_connection import DB
+from db_connection import DB, conn
 
-sql_commands = {
-    'creat_t': """
-        CREATE TABLE transactions (
-                _id SERIAL,
-                amount integer,
-                description text,
-                budget_type integer,
-                category integer,
-                marchant integer,
-                timestamp timestamp,
-                date date,
+sql_commands = [ 
 
-                PRIMARY KEY (_id),
-                FOREIGN KEY (budget_type) REFERENCES budget_types (_id),
-                FOREIGN KEY (category) REFERENCES categories (_id),
-                FOREIGN KEY (marchant) REFERENCES marchants (_id)
-        )
-        """,
-
-    'default_budget_type': """
-        ALTER TABLE transactions
-        ALTER budget_type SET DEFAULT 1
-    """,
-
-    'create_c': """
+    """
         CREATE TABLE categories (
                 _id SERIAL,
                 name varchar(250),
                 PRIMARY KEY(_id)
         )
     """,
-    'create_b':  """
+     """
         CREATE TABLE budget_types (
                 _id SERIAL,
                 name varchar(250),
                 PRIMARY KEY(_id)
         )
     """,
-    'create_m':  """
+    """
         CREATE TABLE marchants (
                 _id SERIAL,
                 name varchar(250),
@@ -46,37 +24,74 @@ sql_commands = {
         )
     """,
 
-    'create_u':"""
+    """
         CREATE TABLE users (
             _id SERIAL,
             username varchar(50),
             password varchar(250),
             email_address varchar(250),
             google_auth_credential text,
-            session_token varchar(250),
             PRIMARY KEY(_id)
         )
     """,
+    """
+        CREATE TABLE transactions (
+                _id SERIAL,
+                amount integer,
+                description text,
+                budget_type_id integer,
+                category_id integer,
+                marchant_id integer,
+                timestamp timestamp,
+                date date,
 
-    'create_l':"""
+                PRIMARY KEY (_id),
+                FOREIGN KEY (budget_type_id) REFERENCES budget_types (_id),
+                FOREIGN KEY (category_id) REFERENCES categories (_id),
+                FOREIGN KEY (marchant_id) REFERENCES marchants (_id)
+        )
+    """,
+
+    """
+        ALTER TABLE transactions
+        ALTER budget_type_id SET DEFAULT 1
+    """,
+
+    """
         CREATE TABLE limits (
             _id SERIAL,
-            budget_type integer,
+            budget_type_id integer,
             month integer,
             year integer,
             amount integer,
             result integer,
             PRIMARY KEY(_id),
-            FOREIGN KEY (budget_type) REFERENCES budget_types (_id)
+            FOREIGN KEY (budget_type_id) REFERENCES budget_types (_id)
         )
     """,
 
-    'seed_1': """
+    """
+        ALTER TABLE limits 
+        ALTER budget_type_id SET DEFAULT 1
+    """,
+
+    """
+        CREATE TABLE session_tokens (
+            _id SERIAL,
+            token varchar(50),
+            user_id integer,
+            PRIMARY KEY(_id),
+            FOREIGN KEY(user_id) REFERENCES users (_id)
+        )
+
+    """,
+
+    """
         INSERT INTO budget_types
         VALUES (DEFAULT, 'monthly_grocery')
     """,
 
-    'seed_2': """
+    """
         INSERT INTO categories 
         VALUES 
         (DEFAULT, 'grocery'),
@@ -88,7 +103,7 @@ sql_commands = {
         (DEFAULT, 'car_maintenance'),
         (DEFAULT, 'generosity')
     """,
-    'seed_3': """
+    """
         INSERT INTO marchants 
         VALUES 
         (DEFAULT, 'Costco'),
@@ -98,16 +113,31 @@ sql_commands = {
         (DEFAULT, 'Kaiser')
     """,
 
-    'seed_4': """
+    """
         INSERT INTO users (_id, username, password)
         VALUES (DEFAULT, 'hiro', 'f177b636530f8ee2919bd790531ce60e711ab9775a231fc4330e4e21090cc1d9')
+    """,
+
     """
-}
+        INSERT INTO limits
+        VALUES (DEFAULT, DEFAULT, 6, 2017, 700, NULL)
+    """
+]
 
 def main():
-    for name, command in sql_commands.iteritems():
-        DB.execute(command)
-        print DB.statusmessage        
+    conn.autocommit = False
+    for command in sql_commands:
+        try:
+            DB.execute(command)
+        except:
+            print 'rolling back...'
+            conn.rollback()
+            raise
+        else:
+            print DB.statusmessage        
+   
+    print 'commiting...'
+    conn.commit() 
 
 if __name__ == '__main__':
     main()

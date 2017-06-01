@@ -131,9 +131,9 @@ class Transaction(DBBase):
         cls.db.execute("""
             SELECT {} 
             FROM transactions t
-            LEFT OUTER JOIN categories c ON t.category = c._id
-            LEFT OUTER JOIN marchants m ON t.marchant = m._id
-            JOIN budget_types b ON t.budget_type = b._id
+            LEFT OUTER JOIN categories c ON t.category_id = c._id
+            LEFT OUTER JOIN marchants m ON t.marchant_id = m._id
+            JOIN budget_types b ON t.budget_type_id = b._id
             WHERE t.date >= '{}' AND t.date < '{}' AND b.name = '{}'
         """.format(select_fields, this_month_start, next_month_start, cls.default_budget_type))
         return cls.db.fetchall()
@@ -157,15 +157,41 @@ class User(DBBase):
     @classmethod
     def auth_master_user(cls, password):
         cls.db.execute("""
-            SELECT password
+            SELECT _id, password
             FROM users
             WHERE username = '{}' 
         """.format(cls.master_user))
-        db_password = cls.db.fetchone()[0]
+        (user_id, db_password) = cls.db.fetchone()
         sha256 = SHA256.new()
         pswd_hash = sha256.new(password).hexdigest()
 
-        if db_password == pswd_hash
-            # return session token
-            pass
+        if db_password == pswd_hash:
+            token = generate_session_token()
+            cls.db.execute("""
+                INSERT INTO session_tokens 
+                VALUES (DEFAULT, '{}', {})
+            """.format(token, user_id)) 
+            return token
 
+        return None
+
+    @classmethod
+    def auth_master_user_session_token(cls, token):
+        cls.db.execute("""
+            SELECT s.token
+            FROM session_tokens s
+            JOIN users u
+            ON u._id = s.user_id
+            WHERE u.username = '{}'
+        """.format(cls.master_user))
+        valid_tokens = [row[0] for row in cls.db.fetchall() if row]
+        return token in valid_tokens
+
+# utils
+def generate_session_token():
+    import string, random
+    token = ''
+    letters = string.lowercase + string.digits
+    for i in range(24):
+       token += letters[random.randint(0,35)] 
+    return token

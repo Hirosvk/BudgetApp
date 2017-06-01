@@ -34,7 +34,7 @@ Use Flask for framework
 
 	prev_month view	
 
-Finish seed file
+Finish seed file -> ran it, it works fine
 Launch to EC2
 
 Email reader
