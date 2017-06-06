@@ -43,6 +43,12 @@ class DBBase(object):
         cls.db.execute("""SELECT * FROM {}""".format(cls.table_name))
         return cls.db.fetchall()
 
+
+    @classmethod
+    def get_all_names(cls):
+        cls.db.execute("""SELECT name FROM {}""".format(cls.table_name))
+        return [row[0] for row in cls.db.fetchall()]
+
     @classmethod
     def get_id_by_name(cls, name):
         cls.db.execute("""
@@ -65,7 +71,7 @@ class DBBase(object):
 class Category(DBBase):
     table_name = 'categories'
     
-class BudgetTyep(DBBase):
+class BudgetType(DBBase):
     table_name = 'budget_types'
 
 class Marchant(DBBase):
@@ -74,38 +80,26 @@ class Marchant(DBBase):
 class Transaction(DBBase):
     table_name = 'transactions'
     default_budget_type = 'monthly_grocery'
+    base_columns = [
+        't.date',
+        't.amount',
+        'm.name',
+        'c.name',
+        'b.name',
+        't.description',
+        't._id'
+    ]
 
     @classmethod
-    def insert(cls, amount, description, date, budget_type=None, category=None, marchant=None):
-
-        if not budget_type:
-            budget_type = 'DEFAULT'
-        else:
-            budget_type = Budget.get_id_by_name(budget_type)
-            if not budget_type:
-                raise TypeError('Invalid budget_type value')
-
-        if not category:
-            category = 'NULL'
-        else:
-            category  = Category.get_id_by_name(category)
-            if not category:
-                raise TypeError('Invalid category value')
-
-        if not marchant:
-            marchant = 'NULL'
-        else:
-            marchant = Marchant.get_id_by_name(marchant)
-            if not marchant:
-                raise TypeError('Invalid marchant value')
-
+    def insert(cls, date=None, description=None, amount=None, budget_type=None, category=None, marchant=None):
+        c = cls.get_fk_ids(budget_type, category, marchant)
         cls.db.execute("""
             INSERT INTO transactions
             VALUES (DEFAULT, {0}, '{1}', {2}, {3}, {4}, CURRENT_TIMESTAMP, '{5}')
-        """.format(amount, description, budget_type, category, marchant, date))
+        """.format(amount, description, c['budget_type_id'], c['category_id'], c['marchant_id'], date))
     
     @classmethod
-    def get_by_month(cls, month, year=None):
+    def get_by_month(cls, month, year=None, as_dict=True):
         if not year:
             year = datetime.datetime.now().year 
 
@@ -119,14 +113,7 @@ class Transaction(DBBase):
         this_month_start = this_month.strftime('%m/%d/%Y') 
         next_month_start = next_month.strftime('%m/%d/%Y') 
 
-        columns = [
-            't.date',
-            't.amount',
-            'm.name',
-            'c.name'
-        ]
-
-        select_fields = ' ,'.join(columns)
+        select_fields = ' ,'.join(cls.base_columns)
 
         cls.db.execute("""
             SELECT {} 
@@ -134,10 +121,112 @@ class Transaction(DBBase):
             LEFT OUTER JOIN categories c ON t.category_id = c._id
             LEFT OUTER JOIN marchants m ON t.marchant_id = m._id
             JOIN budget_types b ON t.budget_type_id = b._id
-            WHERE t.date >= '{}' AND t.date < '{}' AND b.name = '{}'
-        """.format(select_fields, this_month_start, next_month_start, cls.default_budget_type))
-        return cls.db.fetchall()
+            WHERE t.date >= '{}' AND t.date < '{}'
+        """.format(select_fields, this_month_start, next_month_start))
+        result = cls.db.fetchall()
+        if as_dict:
+            return [cls.parse_row(row) for row in result]
 
+        return result
+
+    @classmethod
+    def update_by_id(cls, _id, date=None, description=None, amount=None, budget_type=None, category=None, marchant=None):
+        command = """
+            UPDATE transactions
+            SET"""
+        columns_to_update = cls.get_fk_ids(budget_type, category, marchant)
+        columns_to_update['amount'] = amount
+        columns_to_update['date'] = date
+        columns_to_update['description'] = description 
+        
+        columns = []
+        for name, value in columns_to_update.iteritems():
+            new_line = ''
+            if isinstance(value, int) or value in ['NULL', 'DEFAULT']:
+                new_line = name + " = " + str(value)
+            elif isinstance(value, str) or isinstance(value, unicode):
+                new_line = name + " = '" + value +"'"
+
+            if value and new_line:
+                columns.append(new_line)
+
+        command += " " + ",".join(columns)
+        command += "\nWHERE _id = {}".format(_id)
+        cls.db.execute(command)
+        print cls.db.statusmessage
+        
+
+    @classmethod
+    def get_row_by_id(cls, _id, as_dict=True):
+        select_fields = ' ,'.join(cls.base_columns)
+
+        cls.db.execute("""
+            SELECT {} 
+            FROM transactions t
+            LEFT OUTER JOIN budget_types b ON t.budget_type_id = b._id
+            LEFT OUTER JOIN categories c ON t.category_id = c._id
+            LEFT OUTER JOIN marchants m ON t.marchant_id = m._id
+            WHERE t._id = {}
+        """.format(select_fields, _id))
+        result = cls.db.fetchone()
+
+        if as_dict:
+            return cls.parse_row(result)
+        
+        return result
+            
+    @classmethod
+    def parse_row(cls, result=None):
+        if not result:
+            # for new row
+            result = [None, None, None, None, None, None, None]
+
+        result_dict = {}
+       
+        result_dict['_id'] = result[6] 
+        result_dict['date'] = result[0].strftime('%Y-%m-%d') if isinstance(result[0], datetime.date) else ''
+        result_dict['amount'] = result[1] or 0
+        result_dict['marchant'] = result[2] or ''
+        result_dict['category'] = result[3] or ''
+        result_dict['budget_type'] = result[4] or ''
+        result_dict['description'] = result[5] or ''
+        
+        return result_dict
+        
+
+
+    @classmethod
+    def get_fk_ids(cls, budget_type_name, category_name, marchant_name):
+        (budget_type_id, category_id, marchant_id) = (None, None, None)
+
+        if not budget_type_name:
+            budget_type_id = 'DEFAULT'
+        else:
+            budget_type_id = BudgetType.get_id_by_name(budget_type_name)
+            if not budget_type_id:
+                raise TypeError('Invalid budget_type value')
+
+        if not category_name:
+            category_id = 'NULL'
+        else:
+            category_id  = Category.get_id_by_name(category_name)
+            if not category_id:
+                raise TypeError('Invalid category value')
+
+        if not marchant_name:
+            marchant_id = 'NULL'
+        else:
+            marchant_id = Marchant.get_id_by_name(marchant_name)
+            if not marchant_id:
+                Marchant.insert_new(marchant_name)
+                marchant_id = Marchant.get_id_by_name(marchant_name)
+                
+        
+        return {
+            'budget_type_id': budget_type_id,
+            'category_id': category_id,
+            'marchant_id': marchant_id
+        }
 
 class User(DBBase):
     table_name = 'users'
@@ -187,6 +276,24 @@ class User(DBBase):
         valid_tokens = [row[0] for row in cls.db.fetchall() if row]
         return token in valid_tokens
 
+class Limit(DBBase):
+    table_name = "limits"
+    default_b_type_name = 'monthly_grocery'
+
+    @classmethod
+    def get_amount_by_month(cls, month, year, budget_type_name=None):
+        budget_type_name = budget_type_name or cls.default_b_type_name
+
+        cls.db.execute("""
+            SELECT l.amount 
+            FROM limits l
+            JOIN budget_types b ON l.budget_type_id = b._id
+            WHERE l.month = {} AND l.year = {} AND b.name = '{}'
+        """.format(month, year, budget_type_name))
+        result = cls.db.fetchall()
+        return result[0][0]
+
+
 # utils
 def generate_session_token():
     import string, random
@@ -195,3 +302,5 @@ def generate_session_token():
     for i in range(24):
        token += letters[random.randint(0,35)] 
     return token
+
+

@@ -1,0 +1,39 @@
+<html>
+
+<body>
+
+
+<h2>{{ month + '/' + year }}  Limit: {{ this_month_limit  }}</h2>
+<h2>Remaining: {{ remaining_amt }}</h2>
+
+<table>
+  <thead>
+    <th>Date</th>
+    <th>Amount</th>
+    <th>Marchant</th>
+    <th>Category</th>
+    <th>Budget Type</th>
+    <th>Description</th>
+
+  </thead>
+  <tbody>
+    {% for t in transactions %}
+      <tr>
+          <td>{{ t['date'] }}</td>
+          <td>{{ t['amount'] }}</td>
+          <td>{{ t['marchant'] }}</td>
+          <td>{{ t['category'] }}</td>
+          <td>{{ t['budget_type'] }}</td>
+          <td>{{ t['description'] }}</td>
+          <td><a href="/edit-transaction/{{t['_id']}}">Edit</a></td>
+      </tr>
+
+    {% endfor %}
+  </tbody>
+
+</table>
+<a href="/edit-transaction/0">New Transaction</a>
+
+</body>
+
+</html>

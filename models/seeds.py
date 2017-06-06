@@ -88,7 +88,9 @@ sql_commands = [
 
     """
         INSERT INTO budget_types
-        VALUES (DEFAULT, 'monthly_grocery')
+        VALUES
+        (DEFAULT, 'monthly_grocery'),
+        (DEFAULT, 'other')
     """,
 
     """
@@ -101,7 +103,8 @@ sql_commands = [
         (DEFAULT, 'kids'),
         (DEFAULT, 'medical'),
         (DEFAULT, 'car_maintenance'),
-        (DEFAULT, 'generosity')
+        (DEFAULT, 'generosity'),
+        (DEFAULT, 'other')
     """,
     """
         INSERT INTO marchants 

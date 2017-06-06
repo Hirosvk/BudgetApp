@@ -1,0 +1,31 @@
+<html>
+
+<body>
+
+  <form action="/update-transaction/{{_id}}" method="POST">
+      <label>Date <input type="date" value="{{row_data['date']}}" name="date"></label></br>
+      <label>Amount<input type="number" value="{{row_data['amount']}}" name="amount"></label></br>
+      <label>Marchant<input type="text" value="{{row_data['marchant']}}" name="marchant"></label></br>
+      <label>Category<select value="{{row_data['category']}}" name="category">
+         {% for name in categories %}
+            <option value="{{name}}">{{name}}</option>
+         {% endfor %}
+         </select>
+      </label></br>
+      <label>Budget Type<select value="{{row_data['budget_type']}}" name="budget_type">
+         {% for name in budget_types %}
+            <option value="{{name}}">{{name}}</option>
+         {% endfor %}
+          </select>
+      </label></br>
+      <label>Description<textarea name="description">{{row_data['description']}}</textarea></label></br>
+
+    <input type="submit">
+
+  </form>
+
+</body>
+
+
+</html>
+
