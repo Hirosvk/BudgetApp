@@ -4,6 +4,8 @@ import os
 dbname = os.getenv('BUDGET_APP_DBNAME')
 username = os.getenv('BUDGET_APP_USERNAME')
 password = os.getenv('BUDGET_APP_PASSWORD')
+hostname = os.getenv('BUDGET_APP_HOSTNAME')
+port = os.getenv('BUDGET_APP_PORT')
 
 db_settings = "dbname='" + dbname + "'"
 if username:
@@ -11,6 +13,12 @@ if username:
 
 if password:
     db_settings += "password='" + password + "'"
+
+if hostname:
+    db_settings += "host='" + hostname + "'"
+
+if port:
+    db_settings += "port=" + port
 
 conn = psycopg2.connect(db_settings)
 conn.autocommit = True
