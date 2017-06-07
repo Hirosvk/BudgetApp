@@ -21,6 +21,12 @@ run cli command createdb <dbname>
 connect with psql <dbname> (hiro_psql_local)
 
 
+<Start Here>
+EC2 started and environmental vars setup
+Connection to RDS is also good
+now tring to run servr on port 80 instead of 5000
+
+
 <Next>
 Use Flask for framework
 	static file serving for css
