@@ -21,27 +21,18 @@ run cli command createdb <dbname>
 connect with psql <dbname> (hiro_psql_local)
 
 
-<Start Here>
-EC2 started and environmental vars setup
-Connection to RDS is also good
-now tring to run servr on port 80 instead of 5000
+EC2 Setup
+need to run the following command to install psychopg2
+	`sudo yum -y install gcc python-setuptools python-devel postgresql-devel`
+	(I'm not sure if this did anythin)
+	`/usr/local/bin/pip install -r ...`
+	(for some reason `pip install` did not do it)
 
+Env vars are in envs file
 
-<Next>
-Use Flask for framework
-	static file serving for css
-	Build app with no js
+nohup python main.py
+	nohup let you run a file after exiting ssh or bash
 
-	main page with this months info
-		list of transactions with edit button
-
-	edit page
-		edit content with delte, save, and cancel button
-
-	prev_month view	
-
-Finish seed file -> ran it, it works fine
-Launch to EC2
 
 Email reader
 	first get the server running so that auth request can be made from localhost
@@ -55,41 +46,7 @@ Email reader
 	store credential in db as json
 	probably don't have to use Storage: just use OAuth2Credentials.from_json()
 
-requirements
-	remove 
-		bottle
-	add
-		flask
-		pycrypto
-		google-api-python-client
 
-
-Delete all tables
-Try seeding
-
-Workon bottle app and html templates
-
-
-1. Design
-
-	Schema 
-
-
-
-2. Make Page work w/ manual data enter interface
-
-3. Auto data enter with email reader
-
-Gmail API
-	setup project authentication
-	https://developers.google.com/api-client-library/python/start/get_started#django-support
-
-	OAuth: know what they mean
-	https://developers.google.com/api-client-library/python/reference/pydoc
-	https://developers.google.com/api-client-library/python/guide/aaa_oauth	
-	-> Flow
-	-> Credential
-	-> Storage
 
 
 
