@@ -79,7 +79,7 @@ def show_monthly_grocery(month=None, year=None):
     transactions = Transaction.get_by_month(month, year)
     this_month_limit = Limit.get_amount_by_month(month, year) 
 
-    spent_so_far = reduce(lambda pre, cur: pre + cur if pre else cur, [t['amount'] for t in transactions] )
+    spent_so_far = reduce(lambda pre, cur: pre + cur, [t['amount'] for t in transactions], [0] )
     remaining_amt = this_month_limit - spent_so_far
 
     template_var = {
@@ -95,5 +95,5 @@ def show_monthly_grocery(month=None, year=None):
 
 if __name__ == '__main__':
     host = os.getenv('APP_HOST', '0.0.0.0')
-    port = os.getenv('APP_PORT', 80) 
+    port = os.getenv('APP_PORT') 
     app.run(host=host, port=port)
