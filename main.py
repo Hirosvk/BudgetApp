@@ -94,4 +94,6 @@ def show_monthly_grocery(month=None, year=None):
     return render_template('list_transactions.html', **template_var)
 
 if __name__ == '__main__':
-    app.run()
+    host = os.getenv('APP_HOST', '0.0.0.0')
+    port = os.getenv('APP_PORT', 80) 
+    app.run(host=host, port=port)
