@@ -19,13 +19,13 @@
   <tbody>
     {% for t in transactions %}
       <tr>
-          <td>{{ t['date'] }}</td>
-          <td>{{ t['amount'] }}</td>
-          <td>{{ t['marchant'] }}</td>
-          <td>{{ t['category'] }}</td>
-          <td>{{ t['budget_type'] }}</td>
-          <td>{{ t['description'] }}</td>
-          <td><a href="/edit-transaction/{{t['_id']}}">Edit</a></td>
+          <td style="font-size: 18px; padding: 5px;">{{ t['date'] }}</td>
+          <td style="font-size: 24px; padding: 5px; text-align: right;">{{ t['amount'] }}</td>
+          <td style="font-size: 18px; padding: 5px;">{{ t['marchant'] }}</td>
+          <td style="font-size: 18px; padding: 5px;">{{ t['category'] }}</td>
+          <td style="font-size: 18px; padding: 5px;">{{ t['budget_type'] }}</td>
+          <td style="font-size: 18px; padding: 5px;">{{ t['description'] }}</td>
+          <td style="font-size: 18px; padding: 5px;"><a href="/edit-transaction/{{t['_id']}}">Edit</a></td>
       </tr>
 
     {% endfor %}
