@@ -35,6 +35,10 @@ class DBBase(object):
         cls.db.execute("""DELETE FROM {} WHERE _id = {}""".format(cls.table_name, self._id))
 
     @classmethod
+    def delete_by_id(cls, _id):
+        cls.db.execute("""DELETE FROM {} WHERE _id = {} """.format(cls.table_name, _id))
+
+    @classmethod
     def delete_all(cls):
         cls.db.execute("""DELETE FROM {} WHERE _id > 0 """.format(cls.table_name))
         

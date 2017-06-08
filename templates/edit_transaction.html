@@ -20,9 +20,14 @@
       </label></br>
       <label>Description<textarea name="description">{{row_data['description']}}</textarea></label></br>
 
-    <input type="submit">
+    <input type="submit" value="Update">
 
   </form>
+  {% if _id %} 
+    <form action="/delete-transaction/{{_id}}" method="POST">
+      <input type="submit" value="Delete">
+    </form>
+  {% endif %}
 
 </body>
 

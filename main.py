@@ -13,7 +13,6 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY')
 #   Previous month transactions
 
 
-
 @app.route('/')
 def index():
     if 'session_token' in session:
@@ -35,7 +34,7 @@ def authenticate_master():
         session['session_token'] = session_token 
         return redirect(url_for('index'))
 
-    return 'Wong password!'
+    return 'Wrong password!'
 
 
 @app.route('/edit-transaction/<int:_id>')
@@ -66,6 +65,10 @@ def update_transaction(_id):
 
     return redirect(url_for('index')) 
 
+@app.route('/delete-transaction/<int:_id>', methods=['POST'])
+def delete_transaction(_id):
+    Transaction.delete_by_id(_id)
+    return redirect(url_for('index'))
 
 
 def show_monthly_grocery(month=None, year=None):
@@ -89,3 +92,6 @@ def show_monthly_grocery(month=None, year=None):
     }
 
     return render_template('list_transactions.html', **template_var)
+
+if __name__ == '__main__':
+    app.run()
