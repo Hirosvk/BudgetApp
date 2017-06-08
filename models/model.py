@@ -126,6 +126,7 @@ class Transaction(DBBase):
             LEFT OUTER JOIN marchants m ON t.marchant_id = m._id
             JOIN budget_types b ON t.budget_type_id = b._id
             WHERE t.date >= '{}' AND t.date < '{}'
+            ORDER BY t.date
         """.format(select_fields, this_month_start, next_month_start))
         result = cls.db.fetchall()
         if as_dict:
