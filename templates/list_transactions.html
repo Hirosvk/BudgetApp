@@ -34,6 +34,11 @@
 </table>
 <a href="/edit-transaction/0">New Transaction</a>
 
+<form action="/change-monthly-limit/{{month}}/{{year}}" method="POST">
+  <label>Change this month's limit to... <input type="number" name="new_amount"></label>
+  <input type="submit">
+</form>
+
 </body>
 
 </html>

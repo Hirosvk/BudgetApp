@@ -294,9 +294,45 @@ class Limit(DBBase):
             JOIN budget_types b ON l.budget_type_id = b._id
             WHERE l.month = {} AND l.year = {} AND b.name = '{}'
         """.format(month, year, budget_type_name))
-        result = cls.db.fetchall()
-        return result[0][0]
+        result = cls.db.fetchone()
+        return result[0] if result else None
+    
+    @classmethod
+    def get_id_by_month(cls, month, year, budget_type_name=None):   
+        budget_type_name = budget_type_name or cls.default_b_type_name
 
+        cls.db.execute("""
+            SELECT l._id 
+            FROM limits l
+            JOIN budget_types b ON l.budget_type_id = b._id
+            WHERE l.month = {} AND l.year = {} AND b.name = '{}'
+        """.format(month, year, budget_type_name))
+        result = cls.db.fetchone()
+        return result[0] if result else None
+ 
+    @classmethod
+    def change_limit(cls, month, year, new_amount, budget_type_name=None):
+        _id = cls.get_id_by_month(month, year, budget_type_name) 
+        
+        if not _id:
+            cls.create_new_monthly_limit(month, year, new_amount, budget_type_name)
+        else:
+            cls.db.execute("""
+                UPDATE limits
+                SET amount = {}
+                WHERE _id = {}
+            """.format(new_amount, _id))
+
+    @classmethod
+    def create_new_monthly_limit(cls, month, year, amount, budget_type_name=None):
+        budget_type_name = budget_type_name or cls.default_b_type_name
+        budget_type_id = BudgetType.get_id_by_name(budget_type_name)
+
+        cls.db.execute("""
+            INSERT INTO limits
+            VALUES (DEFAULT, {}, {}, {}, {}, NULL)
+        """.format(budget_type_id, month, year, amount))
+        
 
 # utils
 def generate_session_token():

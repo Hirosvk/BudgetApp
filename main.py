@@ -3,7 +3,7 @@ import datetime
 
 from flask import Flask, render_template, request, redirect, url_for, session
 
-from models.model import User, Transaction, Limit, Category, BudgetType
+from models.model import User, Transaction, Limit, Category, BudgetType, Limit
 
 app = Flask(__name__) 
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
@@ -70,6 +70,12 @@ def delete_transaction(_id):
     Transaction.delete_by_id(_id)
     return redirect(url_for('index'))
 
+@app.route('/change-monthly-limit/<int:month>/<int:year>', methods=['POST'])
+def change_monthly_limit(month, year):
+    new_amount = int(request.form['new_amount'])
+    Limit.change_limit(month, year, new_amount)
+    return redirect(url_for('index'))
+
 
 def show_monthly_grocery(month=None, year=None):
     today = datetime.datetime.today()
@@ -77,7 +83,7 @@ def show_monthly_grocery(month=None, year=None):
     year = year or today.year
 
     transactions = Transaction.get_by_month(month, year)
-    this_month_limit = Limit.get_amount_by_month(month, year) 
+    this_month_limit = Limit.get_amount_by_month(month, year) or 0
 
     spent_so_far = reduce(lambda pre, cur: pre + cur, [t['amount'] for t in transactions], 0)
     remaining_amt = this_month_limit - spent_so_far
