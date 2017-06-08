@@ -1,0 +1,8 @@
+export FLASK_SECRET_KEY=ayumiLUNA1130
+export BUDGET_APP_USERNAME=hirords
+export BUDGET_APP_DBNAME=budget_app_main
+export BUDGET_APP_PASSWORD=Jiro_Shirasu1985
+export BUDGET_APP_HOSTNAME=https://github.com/Hirosvk/BudgetApp.git
+export BUDGET_APP_PORT=5432
+export APP_HOST=0.0.0.0
+export APP_PORT=80
