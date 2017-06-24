@@ -33,6 +33,12 @@ Env vars are in envs file
 nohup python main.py
 	nohup let you run a file after exiting ssh or bash
 
+<Start Here>
+Setup logs
+	app stops responding for some reason, EC2 is runnning, and main.py is running according to
+	`ps aux`
+	app starts responding after re-starting main.py
+	Setup logs to investigate what is happening.
 
 Email reader
 	first get the server running so that auth request can be made from localhost
