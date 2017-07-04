@@ -22,6 +22,10 @@ def index():
 
     return redirect(url_for('sign_in_master'))
 
+@app.route('/grocery/<int:month>/<int:year>')
+def grocery(month, year):
+    return show_monthly_grocery(month, year)
+
 @app.route('/sign-in-master')
 def sign_in_master():
     return render_template('sign-in.html')
