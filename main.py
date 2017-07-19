@@ -89,6 +89,7 @@ def adjust_from_last_month_balance(this_month, this_year):
         date = datetime.datetime(year=this_year, month=this_month, day=1)
         description = 'Adjusted balance from {}/{}'.format(last_month, this_year)
         amount = last_month_limit - last_month_total_spending
+        amount = amount * -1
 
         Transaction.insert(date, description, amount)
     
