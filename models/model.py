@@ -84,6 +84,7 @@ class Marchant(DBBase):
 class Transaction(DBBase):
     table_name = 'transactions'
     default_budget_type = 'monthly_grocery'
+    default_category = 'other'
     base_columns = [
         't.date',
         't.amount',
@@ -133,6 +134,12 @@ class Transaction(DBBase):
             return [cls.parse_row(row) for row in result]
 
         return result
+
+    @classmethod
+    def get_total_spending(cls, month, year):
+        transactions = cls.get_by_month(month, year)
+        spent_so_far = reduce(lambda pre, cur: pre + cur, [t['amount'] for t in transactions], 0)
+        return spent_so_far
 
     @classmethod
     def update_by_id(cls, _id, date=None, description=None, amount=None, budget_type=None, category=None, marchant=None):
@@ -212,7 +219,7 @@ class Transaction(DBBase):
                 raise TypeError('Invalid budget_type value')
 
         if not category_name:
-            category_id = 'NULL'
+            category_id = Category.get_id_by_name(cls.default_category)
         else:
             category_id  = Category.get_id_by_name(category_name)
             if not category_id:

@@ -74,6 +74,27 @@ def delete_transaction(_id):
     Transaction.delete_by_id(_id)
     return redirect(url_for('index'))
 
+@app.route('/adjust-from-last-month-balance/<int:this_month>/<int:this_year>', methods=['POST'])
+def adjust_from_last_month_balance(this_month, this_year):
+    if this_month == 1:
+        last_month = 12
+        this_year -= 1    
+    else:
+        last_month = this_month - 1
+        
+    last_month_limit = Limit.get_amount_by_month(last_month, this_year)
+    last_month_total_spending = Transaction.get_total_spending(last_month, this_year)
+
+    if last_month_limit: 
+        date = datetime.datetime(year=this_year, month=this_month, day=1)
+        description = 'Adjusted balance from {}/{}'.format(last_month, this_year)
+        amount = last_month_limit - last_month_total_spending
+
+        Transaction.insert(date, description, amount)
+    
+    return redirect(url_for('index'))
+
+
 @app.route('/change-monthly-limit/<int:month>/<int:year>', methods=['POST'])
 def change_monthly_limit(month, year):
     new_amount = int(request.form['new_amount'])
@@ -87,9 +108,8 @@ def show_monthly_grocery(month=None, year=None):
     year = year or today.year
 
     transactions = Transaction.get_by_month(month, year)
+    spent_so_far = Transaction.get_total_spending(month, year)
     this_month_limit = Limit.get_amount_by_month(month, year) or 0
-
-    spent_so_far = reduce(lambda pre, cur: pre + cur, [t['amount'] for t in transactions], 0)
     remaining_amt = this_month_limit - spent_so_far
 
     template_var = {
