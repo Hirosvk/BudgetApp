@@ -130,7 +130,9 @@ def show_monthly_grocery(is_current_month=True, month=None, year=None, next_page
     this_month_limit = Limit.get_amount_by_month(month, year) or 0
     remaining_amt = this_month_limit - spent_so_far
 
-    spending_track = utils.get_spending_track(spent_so_far, this_month_limit, month)
+    spending_track = '' 
+    if this_month_limit:
+        spending_track = utils.get_spending_track(spent_so_far, this_month_limit, month)
 
     template_var = {
         'transactions': transactions,

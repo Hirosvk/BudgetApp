@@ -21,9 +21,11 @@
       <td><h3>Today:</h3></td><td><h3>{{ month + '/' + day}}</h3></td>
     </tr>
   {% endif %}
-  <tr>
-    <td><h3>Spending Track:</h3></td><td><h3>{{ month + '/' + spending_track}}</h3></td>
-  </tr>
+  {% if spending_track %}
+    <tr>
+      <td><h3>Spending Track:</h3></td><td><h3>{{ month + '/' + spending_track}}</h3></td>
+    </tr>
+  {% endif %}
 </table>
 
 <table>
